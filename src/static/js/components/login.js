@@ -1,5 +1,14 @@
 const Login = Vue.component("login", {
     template: `
+<div class="container-fluid" id="app">
+<nav class="navbar navbar-expand-lg bg-warning">
+            <a class="navbar-brand" >Blog Lite - Vue App</a>
+
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                </div>
+            </div>
+        </nav>
             <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -8,7 +17,7 @@ const Login = Vue.component("login", {
                     <h1 class="text-center">User Login</h1>
                 </div>
                 <div class="card-body">
-                    <form>
+                    <div>
                         <div class="mb-3">
                             <label for="username" class="form-label">Enter username:</label>
                             <input id="username" v-model = "username" type="text" name="username" class="form-control" required>
@@ -21,10 +30,11 @@ const Login = Vue.component("login", {
                             <input type="submit" @click="login_user" value="Login" class="btn btn-outline-danger">
                             <span style="color:red;" id="error" v-if="error"> {{ this.error }} </span>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
     `,
@@ -59,7 +69,7 @@ const Login = Vue.component("login", {
                             return;
                         }
                         this.error = '';
-                        this.$router.push("/")
+                        this.$router.push("/user")
                     })
                     .catch(e => console.log("Error occurred: ", e.message));
             }
@@ -71,7 +81,3 @@ const Login = Vue.component("login", {
 });
 
 export default Login;
-
-/*
-TODO: Fix URL => no #, query params at end
- */

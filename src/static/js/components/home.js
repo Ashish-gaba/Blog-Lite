@@ -1,6 +1,15 @@
 const Home = Vue.component("home", {
     template: `
+<div class="container-fluid" id="app">
             <!-- Bootstrap container class -->
+            <nav class="navbar navbar-expand-lg bg-warning">
+            <a class="navbar-brand" >Blog Lite - Vue App</a>
+
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                </div>
+            </div>
+        </nav>
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-10">
@@ -16,15 +25,14 @@ const Home = Vue.component("home", {
             <div class="mb-3 d-flex justify-content-center">
                 <div class="mb-3 me-2">
                     <button  class="btn btn-outline-danger btn-lg"><router-link to="/login">Login user</button>
-<!--                    <input type="submit" name="user_type" value="Login user" class="btn btn-outline-danger btn-lg">-->
                 </div>
                 <div class="mb-3">
                     <button  class="btn btn-outline-danger btn-lg"><router-link to="/register">Register user</button>
-<!--                    <input type="submit" name="user_type" value="Register user" class="btn btn-outline-danger btn-lg">-->
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
     `,

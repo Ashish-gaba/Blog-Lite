@@ -1,5 +1,14 @@
 const Register = Vue.component("register", {
     template: `
+<div class="container-fluid" id="app">
+<nav class="navbar navbar-expand-lg bg-warning">
+            <a class="navbar-brand" >Blog Lite - Vue App</a>
+
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                </div>
+            </div>
+        </nav>
             <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -28,6 +37,7 @@ const Register = Vue.component("register", {
                     </div>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 </div>
@@ -47,7 +57,7 @@ const Register = Vue.component("register", {
             const name = this.name;
             if (username && password && name) {
                 const data = {
-                    username: this.username,
+                    username,
                     password,
                     name
                 };
