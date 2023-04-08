@@ -1,9 +1,7 @@
 import Home from "./components/home.js";
-import About from "./components/about.js";
-import Course from "./components/course.js";
-import ContactUs from "./components/contact.js";
+import Register from "./components/register.js";
 import Posts from "./components/posts.js";
-
+import Login from "./components/login.js";
 
 const routes = [
     {
@@ -11,21 +9,17 @@ const routes = [
         component: Home,
     },
     {
-        path: "/about",
-        component: About,
+        path: "/register",
+        component: Register,
     },
     {
-        path: "/contact-us",
-        component: ContactUs,
-    },
-    {
-        path: "/course/:id",
-        component: Course,
+        path: "/login",
+        component: Login,
     },
     {
         path: "/posts",
         component: Posts,
-    },
+    }
 ]
 
 const router = new VueRouter({
