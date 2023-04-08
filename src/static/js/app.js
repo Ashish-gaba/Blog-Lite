@@ -1,7 +1,5 @@
 import router from "./router.js"
-
-
-const a = new Vue({
+const app = new Vue({
     el: "#app",
     delimiters: ["${", "}"],
     router: router,
@@ -12,7 +10,4 @@ const a = new Vue({
     methods: {
 
     },
-    // mounted: {
-
-    // } We can set flag value true/false whether user logged in or not then change the corresponding html
 });

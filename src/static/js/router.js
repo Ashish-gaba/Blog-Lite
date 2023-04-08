@@ -21,10 +21,6 @@ const routes = [
     {
         path: "/course/:id",
         component: Course,
-        // props : True
-        // children: {
-        //     "/course/id/term_id"
-        // }
     },
     {
         path: "/posts",

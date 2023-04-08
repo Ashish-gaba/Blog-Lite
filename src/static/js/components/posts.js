@@ -90,16 +90,14 @@ const Posts = Vue.component("posts", {
         desc: this.desc
       };
 
-
-      // Using fetch() to POST JSON-encoded data.              
       fetch("/createblog", {
-          method: "POST", // or 'PUT'
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(dataToSend),
         })
-        .then((response) => response.json()) //promise resolved 
+        .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
 
@@ -109,8 +107,6 @@ const Posts = Vue.component("posts", {
               console.log("Data returned from the backend:", data);
               this.posts_data = data;
             });
-          // this.$router.go(0)
-          //this.$router.push("/posts") //push the data to frontend..we can either use the above fetch call or this push/go method
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -118,14 +114,13 @@ const Posts = Vue.component("posts", {
 
     },
     update_blog: function (id) {
-      console.log('IN update blog')
       const data = {
         title: this.title,
         desc: this.desc
       };
 
       fetch(`/updateblog/${id}`, {
-          method: "POST", // or 'PUT'
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -140,8 +135,6 @@ const Posts = Vue.component("posts", {
               console.log("Data returned from the backend:", data);
               this.posts_data = data;
             });
-          // this.$router.go(0)
-          // this.$router.push("/posts")
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -150,9 +143,9 @@ const Posts = Vue.component("posts", {
 
     delete_blog: function (id) {
       fetch(`/deleteblog/${id}`)
-        .then((r) => r.json())
-        .then((d) => {
-          console.log(d);
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
           fetch("/getallposts")
             .then((response) => response.json())
             .then((data) => {
