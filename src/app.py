@@ -174,14 +174,15 @@ def unfollow_user(unfollowId):
         db.session.commit()
     return jsonify("Unfollow successful")
 
-# @app.route("/updateblog/<id>", methods=['POST'])
-# def update_blog(id):
-#     data = request.get_json()
-#     blog = Blog.query.get(id)
-#     blog.title = data.get("title")
-#     blog.description = data.get("desc")
-#     db.session.commit()
-#     return jsonify("Post successfully updated")
+@app.route("/edit_blog/<id>", methods=['POST'])
+def edit_blog(id):
+    data = request.get_json()
+    blog = Blog.query.get(id)
+    blog.title = data.get("title")
+    blog.description = data.get("description")
+    # TODO: Image
+    db.session.commit()
+    return jsonify("Post successfully edited")
 
 @app.route("/delete_blog/<id>")
 def delete_blog(id):

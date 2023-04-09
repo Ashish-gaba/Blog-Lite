@@ -62,28 +62,23 @@ My blogs:
             this.$router.push("/follower")
         },
         editBlog: function (id) {
-            this.$router.push("/edit-blog")
-            // fetch(`/edit_blog?id=${id}`)
-            //     .then(response => {
-            //         return response.json()
-            //     })
-            //     .then(data => {
-            //         this.blogs = data.blogs
-            //     })
-            //     .catch(e => console.log("Error occurred: ", e.message));
+            this.$router.push({
+                name: "edit_blog",
+                params: {id}
+            });
         },
         deleteBlog: function (id) {
             const isConfirmed = confirm("Are you sure you want to delete your blog?");
             if (isConfirmed) {
-                 fetch(`/delete_blog/${id}`)
-                .then(response => {
-                    return response.json()
-                })
-                .then(data => {
-                    this.blogs = data
-                    this.blogsCount = this.blogsCount - 1;
-                })
-                .catch(e => console.log("Error occurred: ", e.message));
+                fetch(`/delete_blog/${id}`)
+                    .then(response => {
+                        return response.json()
+                    })
+                    .then(data => {
+                        this.blogs = data
+                        this.blogsCount = this.blogsCount - 1;
+                    })
+                    .catch(e => console.log("Error occurred: ", e.message));
             }
         }
     },

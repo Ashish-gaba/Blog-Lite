@@ -33,6 +33,7 @@ const routes = [
     {
         path: "/edit-blog",
         component: EditBlog,
+        name: 'edit_blog'
     },
     {
         path: "/search",

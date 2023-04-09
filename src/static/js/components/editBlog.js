@@ -1,5 +1,4 @@
 const EditBlog = Vue.component("edit-blog", {
-
     template: `
 <div class="container-fluid" id="app">
 <nav class="navbar navbar-expand-lg bg-warning">
@@ -27,19 +26,21 @@ const EditBlog = Vue.component("edit-blog", {
                     <input id="title" v-model = "title" type="text" maxlength="50" name="title" class="form-control" required>
                     <label for="description" class="form-label">Description: </label>
                     <input id="description" v-model = "description" type="text" maxlength="500" name="description" class="form-control" required>
-                    <input type="submit" @click="createBlog" value="Create Blog" class="btn btn-primary">
+                    <input type="submit" @click="editBlog" value="Edit Blog" class="btn btn-primary">
 <!--                    TODO: Image upload functionality in edit blog-->
+    </div>
     </div>
   `,
     data: function () {
         return {
             title: '',
             description: '',
+            id: '',
         };
     },
 
     methods: {
-        createBlog: function () {
+        editBlog: function () {
             const title = this.title;
             const description = this.description;
             if (title && description) {
@@ -47,8 +48,7 @@ const EditBlog = Vue.component("edit-blog", {
                     title,
                     description,
                 };
-
-                fetch("/edit_blog", {
+                fetch(`/edit_blog/${this.id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -68,6 +68,7 @@ const EditBlog = Vue.component("edit-blog", {
     },
 
     mounted: function () {
+        this.id = this.$route.params.id;
         document.title = "Edit blog";
     },
 });
