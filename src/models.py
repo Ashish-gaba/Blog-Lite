@@ -28,7 +28,7 @@ class User(db.Model):
 
     def encode_auth_token(self, user_id):
         payload = {
-            'exp': datetime.utcnow() + timedelta(days=0, minutes=15),
+            'exp': datetime.utcnow() + timedelta(days=0, minutes=60),
             'iat': datetime.utcnow(),
             'sub': user_id
         }

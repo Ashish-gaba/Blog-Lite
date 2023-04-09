@@ -21,7 +21,7 @@ def home():
             # insert the token
             db.session.add(expired_token)
             db.session.commit()
-    session.pop('username', None)
+    session.pop('auth_token', None)
     return render_template("index.html")
 
 @app.route("/register_user", methods=['POST'])
@@ -39,12 +39,7 @@ def register_user():
     db.session.add(user)
     db.session.commit()
     auth_token = user.encode_auth_token(user.id)
-    responseObject = {
-        'status': 'success',
-        'message': 'User successfully registered.',
-        'auth_token': auth_token.decode()
-    }
-    return jsonify(responseObject)
+    return jsonify("User logged in successfully")
 
 
 @app.route("/login_user", methods=['POST'])
@@ -58,14 +53,8 @@ def login_user():
         return jsonify({'error': 'Invalid credentials. Please try again.'})
     auth_token = users[0].encode_auth_token(users[0].id)
     if auth_token:
-        responseObject = {
-            'status': 'success',
-            'message': 'User logged in successfully.',
-            'auth_token': auth_token.decode()
-        }
-    session['username'] = username
-    session['auth_token'] = auth_token
-    return jsonify(responseObject)
+        session['auth_token'] = auth_token
+    return jsonify("User logged in successfully")
 
 @app.route("/get_feed", methods=["GET"])
 def get_feed():
