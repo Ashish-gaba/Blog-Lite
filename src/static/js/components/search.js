@@ -1,26 +1,30 @@
 const Search = Vue.component("search", {
     template: `
-<div class="container-fluid" id="app">
-<nav class="navbar navbar-expand-lg bg-warning">
-            <a class="navbar-brand" >Blog Lite - Vue App</a>
+    <div class="container-fluid" id="app">
+    <!-- Bootstrap container class -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">Blog Lite - Vue App</a>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/create-blog')">Create Blog</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/user')">Home</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/profile')">My Profile</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/')">Logout</button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/create-blog">Create blog</router-link></button>
-                </div>
-                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/user">Home</router-link></button>
-                </div>
-                <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/profile">My Profile</router-link></button>
-                </div>
-                <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
-                </div>
-        </nav>
+ 
+    </nav>
     <div class="container my-3">
         <div class="row">
             <div class="col-md-6">
@@ -35,12 +39,16 @@ const Search = Vue.component("search", {
         </div>
     <div>
 
-<div v-for="searchResult in searchResults">
+    <div class="my-1" v-for="searchResult in searchResults">
+    <ul class="list-unstyled d-flex align-items-center">
               <button style="color:blue; text-decoration:underline;" @click="fetchProfile(searchResult.id)" id="fetchProfile"  class="btn btn-tertiary-sm"> {{searchResult.username}}</button>
-    <button v-if="searchResult.doesFollow" @click="unfollowUser(searchResult.id)" type="submit" class="btn btn-primary">Unfollow</button>
-    <button v-else type="submit" @click="followUser(searchResult.id)" class="btn btn-tertiary">Follow</button>
-    
-</div>
+      <li>
+        <button v-if="searchResult.doesFollow" @click="unfollowUser(searchResult.id)" type="button" class="btn btn-outline-danger btn-sm">Unfollow</button>
+        <button v-else @click="followUser(searchResult.id)" type="button" class="btn btn-outline-primary btn-sm">Follow</button>
+      </li>
+    </ul>
+  </div>
+  
 </div>
 </div>
 </div>
