@@ -17,7 +17,6 @@ class User(db.Model):
     username = db.Column(db.String(16), unique=True, nullable=False)
     password = db.Column(db.String(16), nullable = False)
     name = db.Column(db.String(30), nullable=False)
-    profile_image = db.Column(db.String(128))
     def __repr__(self):
         return "<User %r>" %self.username
 
@@ -26,7 +25,6 @@ class Blog(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(500), nullable=False)
-    image = db.Column(db.String(128))
     creator_user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
     created_timestamp = db.Column(db.DateTime, nullable=False)
     last_updated_timestamp = db.Column(db.DateTime, nullable=False)

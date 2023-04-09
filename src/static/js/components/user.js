@@ -28,13 +28,13 @@ Search and follow more people to see what they are posting!
 </div>
         <div v-else class="card my-3 mx-3 col-4" style="width: 18rem;" v-for="blog in feed">
           <div class="card-body">
-          <h4 class="card-title"> {{blog.creator_username}} </h4>
+          <button style="color:blue; text-decoration:underline;" @click="fetchProfile(blog.creator_id)" id="fetchProfile"  class="btn btn-outline-tertiary-sm"> {{blog.creator_username}}</button>
             <h5 class="card-title"> {{blog.title}} </h5>
+            <img :src="getImgUrl(blog)" width="200" height="200">
             <p class="card-text"> {{blog.description}} </p>
             </div>
             </div>
 </div>
-
     `,
     data: function () {
         return {
@@ -44,6 +44,17 @@ Search and follow more people to see what they are posting!
             feed: [],
             isFeedEmpty: true
         };
+    },
+    methods: {
+        fetchProfile: function (id) {
+            this.$router.push({
+                name: "profile",
+                params: {id}
+            });
+        },
+        getImgUrl(blog) {
+            return blog.filePath
+        },
     },
     mounted: function(){
         document.title = "User feed"
@@ -61,4 +72,3 @@ Search and follow more people to see what they are posting!
 });
 
 export default User;
-// TODO: Allow opening user profile from username in feed

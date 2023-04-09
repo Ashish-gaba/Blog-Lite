@@ -36,10 +36,11 @@ const Search = Vue.component("search", {
     <div>
 
 <div v-for="searchResult in searchResults">
-    {{searchResult.username}}
+              <button style="color:blue; text-decoration:underline;" @click="fetchProfile(searchResult.id)" id="fetchProfile"  class="btn btn-tertiary-sm"> {{searchResult.username}}</button>
     <button v-if="searchResult.doesFollow" @click="unfollowUser(searchResult.id)" type="submit" class="btn btn-primary">Unfollow</button>
     <button v-else type="submit" @click="followUser(searchResult.id)" class="btn btn-tertiary">Follow</button>
     
+</div>
 </div>
 </div>
 </div>
@@ -52,11 +53,16 @@ const Search = Vue.component("search", {
         };
     },
     methods: {
+        fetchProfile: function (id) {
+            this.$router.push({
+                name: "profile",
+                params: {id}
+            });
+        },
         searchUsers: function () {
             fetch(`/search_user/${this.searchQuery}`)
                 .then(response => response.json())
                 .then(data => {
-                    // TODO: Allow opening user profile
                     this.searchResults = data
                 })
                 .catch(e => console.log("Error occurred: ", e.message));

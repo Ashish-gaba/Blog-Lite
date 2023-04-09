@@ -108,9 +108,8 @@ const Posts = Vue.component("posts", {
               this.posts_data = data;
             });
         })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
+          .catch(e => console.log("Error occurred: ", e.message));
+
 
     },
     update_blog: function (id) {
@@ -136,9 +135,7 @@ const Posts = Vue.component("posts", {
               this.posts_data = data;
             });
         })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+        .catch(e => console.log("Error occurred: ", e.message));
     },
 
     delete_blog: function (id) {

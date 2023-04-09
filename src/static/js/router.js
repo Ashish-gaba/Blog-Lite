@@ -42,6 +42,7 @@ const routes = [
     {
         path: "/profile",
         component: Profile,
+        name: 'profile'
     },
     {
         path: "/follower",

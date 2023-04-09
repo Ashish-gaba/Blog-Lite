@@ -24,7 +24,7 @@ const Follower = Vue.component("follower", {
 <div>
 Your Followers: 
 <div v-for="follower in followers">
-    {{follower.username}}
+                  <button style="color:blue; text-decoration:underline;" @click="fetchProfile(follower.id)" id="fetchProfile"  class="btn btn-tertiary-sm"> {{follower.username}}</button>
     <button v-if="follower.doesFollow" @click="unfollowUser(follower.id)" type="submit" class="btn btn-primary">Unfollow</button>
     <button v-else type="submit" @click="followUser(follower.id)" class="btn btn-tertiary">Follow</button>
 </div>
@@ -38,6 +38,12 @@ Your Followers:
         };
     },
     methods: {
+        fetchProfile: function (id) {
+            this.$router.push({
+                name: "profile",
+                params: {id}
+            });
+        },
         followUser: function (id) {
             fetch(`/follow/${id}`)
                 .then(response => response.json())
@@ -67,4 +73,3 @@ Your Followers:
 });
 
 export default Follower;
-// TODO: Allow opening user profile

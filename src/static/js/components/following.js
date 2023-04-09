@@ -24,7 +24,7 @@ const Following = Vue.component("following", {
 <div>
 People you follow: 
 <div v-for="following in followings">
-    {{following.username}}
+                  <button style="color:blue; text-decoration:underline;" @click="fetchProfile(following.id)" id="fetchProfile"  class="btn btn-tertiary-sm"> {{following.username}}</button>
     <button type="submit" @click="unfollowUser(following.id)" class="btn btn-primary">Unfollow</button>
 </div>
 </div>
@@ -37,6 +37,12 @@ People you follow:
         };
     },
     methods: {
+        fetchProfile: function (id) {
+            this.$router.push({
+                name: "profile",
+                params: {id}
+            });
+        },
         unfollowUser: function (id) {
             fetch(`/unfollow_user/${id}`)
                 .then(response => response.json())
@@ -57,4 +63,3 @@ People you follow:
 });
 
 export default Following;
-// TODO: Allow opening user profile
