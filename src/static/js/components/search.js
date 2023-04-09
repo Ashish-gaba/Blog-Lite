@@ -21,13 +21,20 @@ const Search = Vue.component("search", {
                     <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
                 </div>
         </nav>
-<div>
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-md-6">
+              
+                <div class="form-group">
+                    <label for="searchQuery" class="form-label"><h4>Search any user</h4></label>
+                    <input id="searchQuery" placeholder="Search a user by username" v-model="searchQuery" type="text"
+                        name="searchQuery" class="form-control" required>
+                    <input type="submit" @click="searchUsers" value="Search" class="btn btn-primary my-2">
+                </div>
+            </div>
+        </div>
+    <div>
 
-                            <label for="searchQuery" class="form-label">Search any user</label>
-                            <input id="searchQuery" placeholder="Type a username..." v-model = "searchQuery" type="text" name="searchQuery" class="form-control" required>
-                            <input type="submit" @click="searchUsers" value="Search" class="btn btn-primary">
-</div>
-<div>
 <div v-for="searchResult in searchResults">
     {{searchResult.username}}
     <button v-if="searchResult.doesFollow" @click="unfollowUser(searchResult.id)" type="submit" class="btn btn-primary">Unfollow</button>
