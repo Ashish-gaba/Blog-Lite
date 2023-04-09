@@ -5,6 +5,9 @@ import Login from "./components/login.js";
 import User from "./components/user.js";
 import Search from "./components/search.js";
 import Profile from "./components/profile.js";
+import Follower from "./components/follower.js";
+import Following from "./components/following.js";
+import EditBlog from "./components/editBlog.js";
 
 const routes = [
     {
@@ -28,12 +31,24 @@ const routes = [
         component: CreateBlog,
     },
     {
+        path: "/edit-blog",
+        component: EditBlog,
+    },
+    {
         path: "/search",
         component: Search,
     },
     {
         path: "/profile",
         component: Profile,
+    },
+    {
+        path: "/follower",
+        component: Follower,
+    },
+    {
+        path: "/following",
+        component: Following,
     }
 ]
 

@@ -24,10 +24,10 @@ const Home = Vue.component("home", {
             <!-- Bootstrap form classes -->
             <div class="mb-3 d-flex justify-content-center">
                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/login">Login user</button>
+                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/login">Login user</router-link></button>
                 </div>
                 <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/register">Register user</button>
+                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/register">Register user</router-link></button>
                 </div>
             </div>
         </div>

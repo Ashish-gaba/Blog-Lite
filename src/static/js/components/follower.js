@@ -1,4 +1,4 @@
-const Search = Vue.component("search", {
+const Follower = Vue.component("follower", {
     template: `
 <div class="container-fluid" id="app">
 <nav class="navbar navbar-expand-lg bg-warning">
@@ -12,7 +12,7 @@ const Search = Vue.component("search", {
                     <button  class="btn btn-outline-danger btn-lg"><router-link to="/create-blog">Create blog</router-link></button>
                 </div>
                  <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/user">Home</router-link></button>
+                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/search">Search</router-link></button>
                 </div>
                 <div class="mb-3 me-2">
                     <button  class="btn btn-outline-danger btn-lg"><router-link to="/profile">My Profile</router-link></button>
@@ -22,17 +22,11 @@ const Search = Vue.component("search", {
                 </div>
         </nav>
 <div>
-
-                            <label for="searchQuery" class="form-label">Search any user</label>
-                            <input id="searchQuery" placeholder="Type a username..." v-model = "searchQuery" type="text" name="searchQuery" class="form-control" required>
-                            <input type="submit" @click="searchUsers" value="Search" class="btn btn-primary">
-</div>
-<div>
-<div v-for="searchResult in searchResults">
-    {{searchResult.username}}
-    <button v-if="searchResult.doesFollow" @click="unfollowUser(searchResult.id)" type="submit" class="btn btn-primary">Unfollow</button>
-    <button v-else type="submit" @click="followUser(searchResult.id)" class="btn btn-tertiary">Follow</button>
-    
+Your Followers: 
+<div v-for="follower in followers">
+    {{follower.username}}
+    <button v-if="follower.doesFollow" @click="unfollowUser(follower.id)" type="submit" class="btn btn-primary">Unfollow</button>
+    <button v-else type="submit" @click="followUser(follower.id)" class="btn btn-tertiary">Follow</button>
 </div>
 </div>
 </div>
@@ -40,25 +34,15 @@ const Search = Vue.component("search", {
     `,
     data: function () {
         return {
-            searchQuery: '',
-            searchResults: []
+            followers: []
         };
     },
     methods: {
-        searchUsers: function () {
-            fetch(`/search_user/${this.searchQuery}`)
-                .then(response => response.json())
-                .then(data => {
-                    // TODO: Allow opening user profile
-                    this.searchResults = data
-                })
-                .catch(e => console.log("Error occurred: ", e.message));
-        },
         followUser: function (id) {
             fetch(`/follow/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    this.searchResults = []
+                    this.followers = []
                     this.$router.push("/profile")
                 })
                 .catch(e => console.log("Error occurred: ", e.message));
@@ -73,8 +57,14 @@ const Search = Vue.component("search", {
         }
     },
     mounted: function () {
-        document.title = "Search Users"
+        document.title = "Followers"
+        fetch('/fetch_followers')
+            .then(response => response.json())
+            .then(data => {
+                this.followers = data
+            })
     }
 });
 
-export default Search;
+export default Follower;
+// TODO: Allow opening user profile

@@ -88,7 +88,3 @@ const Register = Vue.component("register", {
 });
 
 export default Register;
-
-/*
-TODO: Fix URL => no #, query params at end
- */

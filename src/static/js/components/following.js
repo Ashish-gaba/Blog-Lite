@@ -1,4 +1,4 @@
-const User = Vue.component("user", {
+const Following = Vue.component("following", {
     template: `
 <div class="container-fluid" id="app">
 <nav class="navbar navbar-expand-lg bg-warning">
@@ -21,44 +21,40 @@ const User = Vue.component("user", {
                     <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
                 </div>
         </nav>
-<div v-if="isFeedEmpty">
-{{this.name}} logged in
-There are no posts in your feed.
-Search and follow more people to see what they are posting!
+<div>
+People you follow: 
+<div v-for="following in followings">
+    {{following.username}}
+    <button type="submit" @click="unfollowUser(following.id)" class="btn btn-primary">Unfollow</button>
 </div>
-        <div v-else class="card my-3 mx-3 col-4" style="width: 18rem;" v-for="blog in feed">
-          <div class="card-body">
-          <h4 class="card-title"> {{blog.creator_username}} </h4>
-            <h5 class="card-title"> {{blog.title}} </h5>
-            <p class="card-text"> {{blog.description}} </p>
-            </div>
-            </div>
+</div>
 </div>
 
     `,
     data: function () {
         return {
-            name: 'User',
-            username: '',
-            id: '',
-            feed: [],
-            isFeedEmpty: true
+            followings: []
         };
     },
-    mounted: function(){
-        document.title = "User feed"
-        fetch('/get_feed')
+    methods: {
+        unfollowUser: function (id) {
+            fetch(`/unfollow_user/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    this.$router.push("/profile")
+                })
+                .catch(e => console.log("Error occurred: ", e.message));
+        }
+    },
+    mounted: function () {
+        document.title = "Following"
+        fetch('/fetch_following')
             .then(response => response.json())
             .then(data => {
-                this.name = data.name
-                this.username = data.username
-                this.id = data.id
-                this.feed = data.feed
-                if(data.feed.length)
-                    this.isFeedEmpty = false
+                this.followings = data
             })
     }
 });
 
-export default User;
-// TODO: Allow opening user profile from username in feed
+export default Following;
+// TODO: Allow opening user profile

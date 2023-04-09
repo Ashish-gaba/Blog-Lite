@@ -1,4 +1,4 @@
-const CreateBlog = Vue.component("create-blog", {
+const EditBlog = Vue.component("edit-blog", {
 
     template: `
 <div class="container-fluid" id="app">
@@ -28,8 +28,7 @@ const CreateBlog = Vue.component("create-blog", {
                     <label for="description" class="form-label">Description: </label>
                     <input id="description" v-model = "description" type="text" maxlength="500" name="description" class="form-control" required>
                     <input type="submit" @click="createBlog" value="Create Blog" class="btn btn-primary">
-<!--                    TODO: Image upload functionality in create blog-->
-    </div>
+<!--                    TODO: Image upload functionality in edit blog-->
     </div>
   `,
     data: function () {
@@ -49,7 +48,7 @@ const CreateBlog = Vue.component("create-blog", {
                     description,
                 };
 
-                fetch("/create_blog", {
+                fetch("/edit_blog", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -69,8 +68,8 @@ const CreateBlog = Vue.component("create-blog", {
     },
 
     mounted: function () {
-        document.title = "Create blog";
+        document.title = "Edit blog";
     },
 });
 
-export default CreateBlog;
+export default EditBlog;

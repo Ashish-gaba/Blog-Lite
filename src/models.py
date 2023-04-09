@@ -1,8 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
-from datetime import datetime
-from pytz import timezone
 
 db = SQLAlchemy()
 
@@ -30,8 +28,8 @@ class Blog(db.Model):
     description = db.Column(db.String(500), nullable=False)
     image = db.Column(db.String(128))
     creator_user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
-    created_timestamp = db.Column(db.DateTime, default=datetime.now(timezone('Asia/Kolkata')), nullable=False)
-    last_updated_timestamp = db.Column(db.DateTime, onupdate=datetime.now(timezone('Asia/Kolkata')), default=datetime.now(timezone('Asia/Kolkata')))
+    created_timestamp = db.Column(db.DateTime, nullable=False)
+    last_updated_timestamp = db.Column(db.DateTime, nullable=False)
     def __repr__(self):
         return "<Blog %r>" %self.title
 
