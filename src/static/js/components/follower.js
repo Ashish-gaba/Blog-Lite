@@ -1,33 +1,41 @@
 const Follower = Vue.component("follower", {
     template: `
-<div class="container-fluid" id="app">
-<nav class="navbar navbar-expand-lg bg-warning">
-            <a class="navbar-brand" >Blog Lite - Vue App</a>
+    <div class="container-fluid" id="app">
+    <!-- Bootstrap container class -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">Blog Lite - Vue App</a>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/create-blog')">Create blog</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/search')">Search</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/profile')">My Profile</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/')">Logout</button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/create-blog">Create blog</router-link></button>
-                </div>
-                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/search">Search</router-link></button>
-                </div>
-                <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/profile">My Profile</router-link></button>
-                </div>
-                <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
-                </div>
-        </nav>
-<div>
-Your Followers: 
-<div v-for="follower in followers">
-    {{follower.username}}
-    <button v-if="follower.doesFollow" @click="unfollowUser(follower.id)" type="submit" class="btn btn-primary">Unfollow</button>
-    <button v-else type="submit" @click="followUser(follower.id)" class="btn btn-tertiary">Follow</button>
-</div>
+ 
+    </nav>
+<div class="container my-3">
+<h4>Your Followers:</h4> 
+<div class="my-1" v-for="follower in followers">
+<ul class="list-unstyled d-flex align-items-center">
+    <li class="me-3">▸ Username - {{follower.username}}</li>
+    <li>
+    <button v-if="follower.doesFollow" @click="unfollowUser(follower.id)" type="submit" class="btn btn-outline-danger">Unfollow</button>
+    <button v-else type="submit" @click="followUser(follower.id)" class="btn btn-outline-primary">Follow</button>
+    </li>
+    </ul>
+    </div>
 </div>
 </div>
 

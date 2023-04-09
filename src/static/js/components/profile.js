@@ -1,27 +1,31 @@
 const Profile = Vue.component("profile", {
     template: `
-<div class="container-fluid" id="app">
-<nav class="navbar navbar-expand-lg bg-warning">
-            <a class="navbar-brand" >Blog Lite - Vue App</a>
+    <div class="container-fluid" id="app">
+    <!-- Bootstrap container class -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">Blog Lite - Vue App</a>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/create-blog')">Create Blog</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/search')">Search</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/user')">Home</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/')">Logout</button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/create-blog">Create blog</router-link></button>
-                </div>
-                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/search">Search</router-link></button>
-                </div>
-                <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/user">Home</router-link></button>
-                </div>
-                <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
-                </div>
-        </nav>
-<div>
+ 
+    </nav>
+<div class="container my-3">
 Profile image here
 <!--TODO: Display and give option to upload-->
 </div>
