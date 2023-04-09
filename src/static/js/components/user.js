@@ -1,26 +1,30 @@
 const User = Vue.component("user", {
     template: `
-<div class="container-fluid" id="app">
-<nav class="navbar navbar-expand-lg bg-warning">
-            <a class="navbar-brand" >Blog Lite - Vue App</a>
+    <div class="container-fluid" id="app">
+    <!-- Bootstrap container class -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">Blog Lite - Vue App</a>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/create-blog')">Create blog</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/search')">Search</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/profile')">My Profile</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/')">Logout</button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/create-blog">Create blog</router-link></button>
-                </div>
-                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/search">Search</router-link></button>
-                </div>
-                <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/profile">My Profile</router-link></button>
-                </div>
-                <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
-                </div>
-        </nav>
+ 
+    </nav>
 <div v-if="isFeedEmpty">
 {{this.name}} logged in
 There are no posts in your feed.
@@ -28,13 +32,13 @@ Search and follow more people to see what they are posting!
 </div>
         <div v-else class="card my-3 mx-3 col-4" style="width: 18rem;" v-for="blog in feed">
           <div class="card-body">
-          <h4 class="card-title"> {{blog.creator_username}} </h4>
+          <button style="color:blue; text-decoration:underline;" @click="fetchProfile(blog.creator_id)" id="fetchProfile"  class="btn btn-outline-tertiary-sm"> {{blog.creator_username}}</button>
             <h5 class="card-title"> {{blog.title}} </h5>
+            <img :src="getImgUrl(blog)" width="200" height="200">
             <p class="card-text"> {{blog.description}} </p>
             </div>
             </div>
 </div>
-
     `,
     data: function () {
         return {
@@ -44,6 +48,17 @@ Search and follow more people to see what they are posting!
             feed: [],
             isFeedEmpty: true
         };
+    },
+    methods: {
+        fetchProfile: function (id) {
+            this.$router.push({
+                name: "profile",
+                params: {id}
+            });
+        },
+        getImgUrl(blog) {
+            return blog.filePath
+        },
     },
     mounted: function(){
         document.title = "User feed"
@@ -61,4 +76,3 @@ Search and follow more people to see what they are posting!
 });
 
 export default User;
-// TODO: Allow opening user profile from username in feed

@@ -1,47 +1,65 @@
 const Profile = Vue.component("profile", {
     template: `
-<div class="container-fluid" id="app">
-<nav class="navbar navbar-expand-lg bg-warning">
-            <a class="navbar-brand" >Blog Lite - Vue App</a>
+    <div class="container-fluid" id="app">
+    <!-- Bootstrap container class -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">Blog Lite - Vue App</a>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/create-blog')">Create Blog</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/search')">Search</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/user')">Home</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/')">Logout</button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/create-blog">Create blog</router-link></button>
-                </div>
-                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/search">Search</router-link></button>
-                </div>
-                <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/user">Home</router-link></button>
-                </div>
-                <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
-                </div>
-        </nav>
+ 
+    </nav>
 <div>
-Profile image here
-<!--TODO: Display and give option to upload-->
+    {{username}}'s profile        
+</div>
+<div>
+    <img :src="getProfilePicUrl()" width="100" height="100">
+    <div  v-if="!isDifferentUser" class="mb-2">
+                <label for="formFile" class="form-label my-2">Change Profile Pic</label>
+                <input class="form-control" type="file" id="formFile" ref="formFile" v-on:change="handleProfilePicUpload">
+            </div>
 </div>
 
 
 Total Blogs : {{blogsCount}}
 <div id="followerCountDiv">
-Followed by : <button @click="showFollowers" id="followerCount"  class="btn btn-primary"> {{followerCount}}</button>
+Followed by : <button style="color:blue; text-decoration:underline;" @click="showFollowers" id="followerCount" v-if="!isDifferentUser" class="btn btn-outline-tertiary-sm"> {{followerCount}}</button>
+<div v-else>{{followerCount}}</div>
 </div>
 <div id="followingCountDiv">
-Following count : <button @click="showFollowings" id="followingCount"  class="btn btn-primary"> {{followingCount}}</button>
+Following count : <button style="color:blue; text-decoration:underline;" @click="showFollowings" id="followingCount" v-if="!isDifferentUser" class="btn btn-outline-tertiary-sm"> {{followingCount}}</button>
+<div v-else>{{followingCount}}</div>
 </div>
 
 <div>
-My blogs: 
+Posted blogs: 
 <div v-for="blog in blogs">
-    <div>{{blog.title}}</div>
-    <div>{{blog.description}}</div>
-    <button @click="editBlog(blog.id)" id="editBlog"  class="btn btn-primary">Edit Blog</button>
-    <button @click="deleteBlog(blog.id)" id="deleteBlog"  class="btn btn-primary">Delete Blog</button>
+<div>
+Title: {{blog.title}}
+    <span>    Description: {{blog.description}}</span>
+    <div><img :src="getImgUrl(blog)" width="200" height="200"></div>
+    <div>
+    <button @click="editBlog(blog.id)" v-if="!isDifferentUser" id="editBlog"  class="btn btn-primary mt-1">Edit Blog</button>
+    <button @click="deleteBlog(blog.id)" v-if="!isDifferentUser" id="deleteBlog"  class="btn btn-primary mt-1">Delete Blog</button>
+</div>
+    
+</div>
 </div>
 </div>
 </div>
@@ -52,9 +70,36 @@ My blogs:
             followingCount: 0,
             followerCount: 0,
             blogs: [],
+            isDifferentUser: false,
+            name: '',
+            username: '',
+            profilePicUrl: ''
         }
     },
     methods: {
+        handleProfilePicUpload() {
+            const file = this.$refs.formFile.files[0];
+            if(file) {
+                let formData = new FormData();
+                formData.append('file', file)
+                fetch("/upload_profile_pic", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Success:", data);
+                        this.$router.push("/profile")
+                    })
+                    .catch(e => console.log("Error occurred: ", e.message));
+            }
+        },
+        getProfilePicUrl() {
+            return this.profilePicUrl
+        },
+        getImgUrl(blog) {
+            return blog.filePath
+        },
         showFollowings: function () {
             this.$router.push("/following")
         },
@@ -84,7 +129,8 @@ My blogs:
     },
     mounted: function () {
         document.title = "User profile"
-        fetch('/user_profile')
+        this.id = this.$route.params.id;
+        fetch(`/user_profile/${this.id}`)
             .then(response => {
                 return response.json()
             })
@@ -93,14 +139,13 @@ My blogs:
                 this.followingCount = data.followingCount
                 this.followerCount = data.followerCount
                 this.blogs = data.blogs
+                this.isDifferentUser = data.isDifferentUser
+                this.username = data.username
+                this.name = data.name
+                this.profilePicUrl = data.profilePicUrl
             })
             .catch(e => console.log("Error occurred: ", e.message));
     }
 });
 
 export default Profile
-
-
-/*
-TODO: Edit blog
- */

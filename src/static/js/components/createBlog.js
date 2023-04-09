@@ -1,27 +1,31 @@
 const CreateBlog = Vue.component("create-blog", {
 
     template: `
-<div class="container-fluid" id="app">
-<nav class="navbar navbar-expand-lg bg-warning">
-            <a class="navbar-brand" >Blog Lite - Vue App</a>
+    <div class="container-fluid" id="app">
+    <!-- Bootstrap container class -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">Blog Lite - Vue App</a>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/user')">Home</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/search')">Search</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/profile')">My Profile</button>
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-primary mx-1" @click="$router.push('/')">Logout</button>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/user">Home</router-link></button>
-                </div>
-                 <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/search">Search</router-link></button>
-                </div>
-                <div class="mb-3 me-2">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/profile">My Profile</router-link></button>
-                </div>
-                <div class="mb-3">
-                    <button  class="btn btn-outline-danger btn-lg"><router-link to="/">Logout</router-link></button>
-                </div>
-        </nav>
+ 
+    </nav>
         <div class="container my-3 mx-auto">
         <div class="row justify-content-left">
             <div class="col-md-6">
@@ -37,13 +41,13 @@ const CreateBlog = Vue.component("create-blog", {
     
             <div class="mb-2">
                 <label for="formFile" class="form-label my-2">Upload Image</label>
-                <input class="form-control" type="file" id="formFile">
+                <input class="form-control" type="file" id="formFile" ref="formFile">
             </div>
             <div class="col d-flex justify-content-start">
                 <input type="submit" @click="createBlog" value="Create Blog" class="btn btn-primary mt-2">
-                <!--                    TODO: Image upload functionality in create post-->
             </div>
         </div>
+    </div>
     </div>
     </div>
   `,
@@ -58,27 +62,26 @@ const CreateBlog = Vue.component("create-blog", {
         createBlog: function () {
             const title = this.title;
             const description = this.description;
-            if (title && description) {
+            const file = this.$refs.formFile.files[0];
+            if (title && description && file) {
                 const dataToSend = {
                     title,
                     description,
                 };
+                let formData = new FormData();
+                formData.append('file', file)
+                formData.append('data', JSON.stringify(dataToSend))
 
                 fetch("/create_blog", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(dataToSend),
+                    body: formData
                 })
                     .then((response) => response.json())
                     .then((data) => {
                         console.log("Success:", data);
                         this.$router.push("/profile")
                     })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    })
+                    .catch(e => console.log("Error occurred: ", e.message));
             }
         },
     },
