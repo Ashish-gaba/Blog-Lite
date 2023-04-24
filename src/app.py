@@ -1,5 +1,8 @@
-from flask import Flask, render_template, jsonify, request, session, url_for
+from flask import Flask, render_template, jsonify, request, session, url_for, send_file
 from models import *
+from celery_worker import make_celery
+from celery.result import AsyncResult
+from celery.schedules import crontab
 from operator import itemgetter
 from datetime import datetime
 from pytz import timezone
@@ -12,6 +15,46 @@ app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///blogs_database.sqlite3?charset=utf8"
 app.config['SECRET_KEY'] = 'SecretKeyForSession'
 
+app.config.update(
+    CELERY_BROKER_URL='redis://localhost:6379',
+    CELERY_RESULT_BACKEND='redis://localhost:6379'
+)
+celery = make_celery(app)
+
+@celery.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    print("a")
+    # Calls test('hello') every 10 seconds.
+    # sender.add_periodic_task(10.0, add_together.s(9, 6), name='add every 10')
+
+
+
+@celery.task
+def generate_csv():
+    # importing the csv module
+    import csv
+    import pandas as pd
+
+    blogs = Blog.query.all()
+
+    allCols = ['title', 'description']
+    df = pd.DataFrame(columns=allCols)
+    for idx, blog in enumerate(blogs):
+        df.at[idx,'title'] = blog.title
+        df.at[idx,'description'] = blog.description
+    
+    # writing to csv file
+    with open("static/data.csv", 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
+        
+        # writing the fields
+        csvwriter.writerow(allCols)
+        
+        # writing the data rows
+        csvwriter.writerows(df.values)
+
+    return "Job Started..."
 
 @app.route("/")
 def home():
@@ -243,6 +286,29 @@ def upload_profile_pic():
     file.save(currDir + '/static/uploads/profile_pic/' + str(user.id) + '.png')
     return jsonify("Picture successfully updated")
 
+
+# Celery
+@app.route("/trigger-celery-job")
+def trigger_celery_job():
+    a = generate_csv.delay()
+    return {
+        "Task_ID" : a.id,
+        "Task_State" : a.state,
+        "Task_Result" : a.result
+    }
+
+@app.route("/status/<id>")
+def check_status(id):
+    res = AsyncResult(id, app = celery)
+    return {
+        "Task_ID" : res.id,
+        "Task_State" : res.state,
+        "Task_Result" : res.result
+    }
+
+@app.route("/download-file")
+def download_file():
+    return send_file("static/data.csv")
 
 if __name__ == "__main__":
     db.create_all()

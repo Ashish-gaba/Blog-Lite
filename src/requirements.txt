@@ -10,3 +10,5 @@ SQLAlchemy==1.4.37
 Werkzeug==2.1.2
 zipp==3.8.0
 pytz==2023.3
+redis==4.5.4
+celery==5.2.7

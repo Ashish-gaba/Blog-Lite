@@ -36,6 +36,7 @@ const Profile = Vue.component("profile", {
             </div>
 </div>
 
+<button @click="trigger_celery_job()" id="celeryJob"  class="btn btn-primary mt-1" v-if="!isDifferentUser">Export Blogs</button>
 
 Total Blogs : {{blogsCount}}
 <div id="followerCountDiv">
@@ -125,7 +126,28 @@ Title: {{blog.title}}
                     })
                     .catch(e => console.log("Error occurred: ", e.message));
             }
-        }
+        },
+        trigger_celery_job : function () {
+
+            fetch("/trigger-celery-job").then(r => r.json()
+            ).then(d => {
+              console.log("Celery Task Details:", d);
+              let interval = setInterval(() => {
+                fetch(`/status/${d.Task_ID}`).then(r => r.json()
+                ).then(d => {
+                    if (d.Task_State === "SUCCESS") {
+                      console.log("task finished")
+                      clearInterval(interval);
+                    //   fetch("/download-file").then(r => console.log(r))
+                    window.location.href = "/download-file";
+                    }
+                    else {
+                      console.log("task still executing")
+                    }
+                })
+              }, 4000)
+            })
+          }
     },
     mounted: function () {
         document.title = "User profile"
