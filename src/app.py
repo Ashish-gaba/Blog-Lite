@@ -35,11 +35,11 @@ def generate_csv():
     import csv
     import pandas as pd
 
-    blogs = Blog.query.all()
-
+    user = User.query.filter_by(username=session.get('username')).first()
+    userBlogs = Blog.query.filter_by(creator_user_id=user.id).all()
     allCols = ['title', 'description']
     df = pd.DataFrame(columns=allCols)
-    for idx, blog in enumerate(blogs):
+    for idx, blog in enumerate(userBlogs):
         df.at[idx,'title'] = blog.title
         df.at[idx,'description'] = blog.description
     
