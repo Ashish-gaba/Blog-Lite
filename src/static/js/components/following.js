@@ -23,7 +23,7 @@ const Following = Vue.component("following", {
                     </li>
                 </ul>
             </div>
- 
+ </div>
     </nav>
 <div class="container my-3">
 <h4>People you follow: </h4>

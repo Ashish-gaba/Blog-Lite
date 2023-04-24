@@ -23,7 +23,7 @@ const EditBlog = Vue.component("edit-blog", {
                     </li>
                 </ul>
             </div>
- 
+        </div>
     </nav>
     <div class="container my-3 mx-auto">
     <div class="row justify-content-left">
@@ -52,7 +52,10 @@ const EditBlog = Vue.component("edit-blog", {
     </div>
     </div>
     </div>
-  `,
+    </div>
+    </div>
+</div>`
+    ,
     data: function () {
         return {
             title: '',

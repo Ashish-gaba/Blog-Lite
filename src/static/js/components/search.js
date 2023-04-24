@@ -23,7 +23,7 @@ const Search = Vue.component("search", {
                     </li>
                 </ul>
             </div>
- 
+        </div>
     </nav>
     <div class="container my-3">
         <div class="row">

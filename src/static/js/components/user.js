@@ -23,6 +23,7 @@ const User = Vue.component("user", {
                     </li>
                 </ul>
             </div>
+            </div>
  
     </nav>
 <div v-if="isFeedEmpty">

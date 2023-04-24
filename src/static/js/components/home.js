@@ -12,6 +12,7 @@ const Home = Vue.component("home", {
                 <div class="navbar-nav">
                 </div>
             </div>
+            </div>
         </nav>
 <div class="container my-5">
     <div class="row justify-content-center">

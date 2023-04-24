@@ -23,7 +23,7 @@ const Profile = Vue.component("profile", {
                     </li>
                 </ul>
             </div>
- 
+        </div>
     </nav>
 <div>
     {{username}}'s profile        
@@ -36,10 +36,10 @@ const Profile = Vue.component("profile", {
             </div>
 </div>
 
+<h5>Total Blogs : {{blogsCount}}</h5>
 <button @click="trigger_celery_job()" id="celeryJob"  class="btn btn-primary mt-1" v-if="!isDifferentUser">Export Blogs</button>
 
-Total Blogs : {{blogsCount}}
-<div id="followerCountDiv">
+<div style="padding-top: 30px" id="followerCountDiv">
 Followed by : <button style="color:blue; text-decoration:underline;" @click="showFollowers" id="followerCount" v-if="!isDifferentUser" class="btn btn-outline-tertiary-sm"> {{followerCount}}</button>
 <div v-else>{{followerCount}}</div>
 </div>
@@ -49,15 +49,16 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
 </div>
 
 <div>
-Posted blogs: 
+<h5 style="padding-top: 30px; padding-bottom: 20px; padding-left: 70px;text-decoration: underline;">Posted blogs:</h5> 
 <div v-for="blog in blogs">
 <div>
-Title: {{blog.title}}
-    <span>    Description: {{blog.description}}</span>
+<div><h6>    Title: {{blog.title}}</h6></div>
+    <div><h6>    Description: {{blog.description}}</h6></div>
     <div><img :src="getImgUrl(blog)" width="200" height="200"></div>
     <div>
     <button @click="editBlog(blog.id)" v-if="!isDifferentUser" id="editBlog"  class="btn btn-primary mt-1">Edit Blog</button>
     <button @click="deleteBlog(blog.id)" v-if="!isDifferentUser" id="deleteBlog"  class="btn btn-primary mt-1">Delete Blog</button>
+    <div style="margin-bottom: 30px"></div>
 </div>
     
 </div>

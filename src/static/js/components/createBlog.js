@@ -24,7 +24,7 @@ const CreateBlog = Vue.component("create-blog", {
                     </li>
                 </ul>
             </div>
- 
+        </div>
     </nav>
         <div class="container my-3 mx-auto">
         <div class="row justify-content-left">
