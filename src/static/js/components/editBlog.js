@@ -46,7 +46,7 @@ const EditBlog = Vue.component("edit-blog", {
                 <input class="form-control" type="file" id="formFile" ref="formFile">
             </div>
             <div class="col d-flex justify-content-start">
-                <input type="submit" @click="editBlog" value="Create Blog" class="btn btn-primary mt-2">
+                <input type="submit" @click="editBlog" value="Edit Blog" class="btn btn-primary mt-2">
             </div>
         </div>
     </div>

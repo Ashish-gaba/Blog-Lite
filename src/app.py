@@ -279,15 +279,16 @@ def delete_blog(id):
             'id': el.id,
             'title': el.title,
             'description': el.description,
+            'filePath': url_for('static', filename=f'uploads/{el.id}.png')
         })
     return jsonify(blogsToSend)
 
 @app.route("/upload_profile_pic", methods=['POST'])
 def upload_profile_pic():
-    user = User.query.filter_by(username=session.get('username')).first()
+    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
     file = request.files.get('file')
     currDir = os.path.abspath(os.path.dirname(__file__))
-    file.save(currDir + '/static/uploads/profile_pic/' + str(user.id) + '.png')
+    file.save(currDir + '/static/uploads/profile_pic/' + str(loggedInUserId) + '.png')
     return jsonify("Picture successfully updated")
 
 

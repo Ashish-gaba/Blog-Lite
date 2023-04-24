@@ -26,10 +26,10 @@ const Profile = Vue.component("profile", {
         </div>
     </nav>
 <div>
-    {{username}}'s profile        
+    {{name}}'s profile        
 </div>
 <div>
-    <img :src="getProfilePicUrl()" width="100" height="100">
+    <img :key="componentKey" :src="getProfilePicUrl()" width="100" height="100">
     <div  v-if="!isDifferentUser" class="mb-2">
                 <label for="formFile" class="form-label my-2">Change Profile Pic</label>
                 <input class="form-control" type="file" id="formFile" ref="formFile" v-on:change="handleProfilePicUpload">
@@ -75,7 +75,8 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
             isDifferentUser: false,
             name: '',
             username: '',
-            profilePicUrl: ''
+            profilePicUrl: '',
+            componentKey: 0,
         }
     },
     methods: {
@@ -91,7 +92,7 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
                     .then((response) => response.json())
                     .then((data) => {
                         console.log("Success:", data);
-                        this.$router.push("/profile")
+                        this.componentKey += 1;
                     })
                     .catch(e => console.log("Error occurred: ", e.message));
             }
@@ -129,7 +130,6 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
             }
         },
         trigger_celery_job : function () {
-
             fetch("/trigger-celery-job").then(r => r.json()
             ).then(d => {
               console.log("Celery Task Details:", d);
