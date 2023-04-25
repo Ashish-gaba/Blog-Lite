@@ -66,12 +66,11 @@ def has_user_posted_today(user_id):
     return True
 
 @celery.task
-def generate_csv():
+def generate_csv(user_id):
     import csv
     import pandas as pd
 
-    # user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
-    user_id = 1
+
     userBlogs = Blog.query.filter_by(creator_user_id=user_id).all()
     allCols = ['title', 'description']
     df = pd.DataFrame(columns=allCols)
@@ -332,7 +331,8 @@ def upload_profile_pic():
 # Celery
 @app.route("/trigger-celery-job")
 def trigger_celery_job():
-    a = generate_csv.delay()
+    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+    a = generate_csv.delay(user_id)
     return jsonify({
         "Task_ID" : a.id,
         "Task_State" : a.state,
