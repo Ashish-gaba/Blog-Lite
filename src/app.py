@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = 'SecretKeyForSession'
 
 SMTP_SERVER_HOST = "localhost"
 SMTP_SERVER_PORT = 1025
-SENDER_ADDRESS = "email@test.com"
+SENDER_ADDRESS = "admin_ashish@bloglite.com"
 SENDER_PASSWORD = ""
 
 app.config.update(
@@ -32,41 +32,35 @@ celery = make_celery(app)
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(hour=0),
+        crontab(hour=19),
         send_email(),
         name='sends an email every 0th hour of every day'
     )
-    # Calls test('hello') every 10 seconds.
-    # sender.add_periodic_task(10.0, add_together.s(9, 6), name='add every 10')
 
 # @celery.task
 def send_email():
-    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
-    users = User.query.filter_by(id=user_id).all()
-    to_address = f'{users[0].name}@gmail.com'
+    users = User.query.all()
+    for user in users:
+        if not has_user_posted_today(user.id):
+            to_address = f'{user.name}@gmail.com'
+            subject = f"{user.username}, you have not posted anything today!"
+            message = "Post something and let the world know what's on your mind today!"
 
-    if not has_user_posted_today():
-        subject = f"{users[0].username}, you have not posted anything today!"
-        message = "Post something and let the world know what's on your mind today!"
+            msg = MIMEMultipart()
+            msg["From"] = SENDER_ADDRESS
+            msg["To"] = to_address
+            msg["Subject"] = subject
+            msg.attach(MIMEText(message, "HTML"))
 
-        msg = MIMEMultipart()
-        msg["From"] = SENDER_ADDRESS
-        msg["To"] = to_address
-        msg["Subject"] = subject
+            # creating SMTP object with address to whom to send email
+            s = smtplib.SMTP(host=SMTP_SERVER_HOST, port=SMTP_SERVER_PORT)
+            s.login(SENDER_ADDRESS, SENDER_PASSWORD)
+            s.send_message(msg)
+            s.quit()
 
-        msg.attach(MIMEText(message, "HTML"))
-
-        s = smtplib.SMTP(host=SMTP_SERVER_HOST, port=SMTP_SERVER_PORT)
-        # s.connect()
-        s.login(SENDER_ADDRESS, SENDER_PASSWORD)
-        s.send_message(msg)
-        s.quit()
-        return True
-
-def has_user_posted_today():
-    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+def has_user_posted_today(user_id):
     today = date.today()
-    blogs_posted_today = Blog.query.filter_by(creator_user_id=user_id).filter(db.and_(Blog.created_timestamp>=today, Blog.created_timestamp<today+timedelta(days=1))).all()
+    blogs_posted_today = Blog.query.filter_by(creator_user_id=user_id).filter(Blog.created_timestamp>=today).all()
     if blogs_posted_today == []:
         return False
     return True
