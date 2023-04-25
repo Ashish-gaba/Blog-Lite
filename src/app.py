@@ -34,7 +34,8 @@ def generate_csv():
     import csv
     import pandas as pd
 
-    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+    # user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+    user_id = 1
     userBlogs = Blog.query.filter_by(creator_user_id=user_id).all()
     allCols = ['title', 'description']
     df = pd.DataFrame(columns=allCols)
@@ -296,11 +297,11 @@ def upload_profile_pic():
 @app.route("/trigger-celery-job")
 def trigger_celery_job():
     a = generate_csv.delay()
-    return {
+    return jsonify({
         "Task_ID" : a.id,
         "Task_State" : a.state,
         "Task_Result" : a.result
-    }
+    })
 
 @app.route("/status/<id>")
 def check_status(id):
