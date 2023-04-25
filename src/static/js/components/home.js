@@ -40,6 +40,7 @@ const Home = Vue.component("home", {
     `,
     mounted: function(){
         document.title = "Blog Lite"
+        fetch('/').then(d=>console.log(d))
     }
 });
 

@@ -5,6 +5,7 @@ from celery.result import AsyncResult
 from celery.schedules import crontab
 from operator import itemgetter
 from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from pytz import timezone
 import json
 import os
@@ -36,6 +37,11 @@ def setup_periodic_tasks(sender, **kwargs):
         send_email(),
         name='sends an email every 0th hour of every day'
     )
+    sender.add_periodic_task(
+        crontab(send_monthly_report=1),
+        send_email(),
+        name='sends an email every 0th hour of every day'
+    )
 
 # @celery.task
 def send_email():
@@ -64,6 +70,32 @@ def has_user_posted_today(user_id):
     if blogs_posted_today == []:
         return False
     return True
+
+def send_monthly_report():
+    users = User.query.all()
+    today = date.today()
+    first_day = today.replace(day=1)
+    last_month_start = first_day - relativedelta(months=1)
+
+    for user in users:
+        all_blogs = Blog.query.filter_by(creator_user_id=user.id).filter(Blog.created_timestamp>=last_month_start).all()
+
+        to_address = f'{user.username}@gmail.com'
+        subject = f"{user.name}, here is your monthly report!"
+        message = f"You created {len(all_blogs)} blogs in the last month."
+
+        msg = MIMEMultipart()
+        msg["From"] = SENDER_ADDRESS
+        msg["To"] = to_address
+        msg["Subject"] = subject
+
+        msg.attach(MIMEText(message, "HTML"))
+
+        s = smtplib.SMTP(host=SMTP_SERVER_HOST, port=SMTP_SERVER_PORT)
+        # s.connect()
+        s.login(SENDER_ADDRESS, SENDER_PASSWORD)
+        s.send_message(msg)
+        s.quit()
 
 @celery.task
 def generate_csv(user_id):
