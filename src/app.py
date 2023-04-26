@@ -13,6 +13,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask_caching import Cache
 from time import perf_counter_ns
+from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 db.init_app(app)
@@ -73,22 +74,28 @@ def setup_periodic_tasks(sender, **kwargs):
         send_email.s(),
         name='sends a reminder email every 19th hour(at 7:00pm) of every day'
     )
-    # sender.add_periodic_task(
-    #     crontab(day_of_month=1),
-    #     send_report.s(),
-    #     name='sends an email report every first day of the  month'
-    # )
+    sender.add_periodic_task(
+        crontab(day_of_month=1),
+        send_report.s(),
+        name='sends an email report every first day of the  month'
+    )
 
-# @celery.task
+@celery.task
 def send_report():
     print("send_report called")
     users = User.query.all()
     for user in users:
-        blogs = Blog.query.filter_by(creator_user_id=user.id).filter(Blog.created_timestamp>=today).all()
+        modified_date = datetime.today().replace(day=1, hour=0, minute=0, second=0) - relativedelta(months=1)
+        blogs = Blog.query.filter_by(creator_user_id=user.id).filter(Blog.created_timestamp>=modified_date).all()
 
         to_address = f'{user.name}@gmail.com'
         subject = f"{user.username}, your monthly report on BlogLite!"
-        message = "Post something and let the world know what's on your mind today!"
+        message = "Here are your blogs:\n"
+        for blog in blogs:
+            message += "Title: "
+            message += f"{blog.title}\n"
+            message += "Description: "
+            message += f"{blog.description}\n\n"
 
         msg = MIMEMultipart()
         msg["From"] = SENDER_ADDRESS
