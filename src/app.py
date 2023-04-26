@@ -11,12 +11,15 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from flask_caching import Cache
+from time import perf_counter_ns
 
 app = Flask(__name__)
 db.init_app(app)
 app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///blogs_database.sqlite3?charset=utf8&check_same_thread=False"
 app.config['SECRET_KEY'] = 'SecretKeyForSession'
+cache = None
 
 SMTP_SERVER_HOST = "localhost"
 SMTP_SERVER_PORT = 1025
@@ -28,6 +31,15 @@ app.config.update(
     CELERY_RESULT_BACKEND='redis://localhost:6379'
 )
 celery = make_celery(app)
+
+@cache.memoize(10)
+def cached_logged_in_user(user_id):
+    return User.query.get(user_id)
+
+@cache.memoize(10)
+def cached_blog_feed(following_id):
+    return Blog.query.filter_by(creator_user_id=following_id).all()
+
 
 @app.route("/check_authenticated_user", methods=['GET'])
 def check_authenticated_user():
@@ -159,11 +171,17 @@ def get_feed():
     user_id = check_and_get_authenticated_user()
     if user_id == False:
         return jsonify({'loggedOutUser': True})
-    user = User.query.get(user_id)
+    start = perf_counter_ns()
+    user = cached_logged_in_user(user_id)
+    stop = perf_counter_ns()
+    print("Time taken to fetch user:", stop - start)
     following = Follow.query.filter_by(follower_id=user.id).all()
     followingIds = [el.following_id for el in following]
     for followingId in followingIds:
-        blogs = Blog.query.filter_by(creator_user_id=followingId).all()
+        start = perf_counter_ns()
+        blogs = cached_blog_feed(followingId)
+        stop = perf_counter_ns()
+        print("Time taken to fetch blogs for feed:", stop - start)
         creator = User.query.get(followingId)
         for blog in blogs:
             feed.append({
@@ -191,7 +209,10 @@ def create_blog():
     user_id = check_and_get_authenticated_user()
     if user_id == False:
         return jsonify({'loggedOutUser': True})
-    user = User.query.get(user_id)
+    start = perf_counter_ns()
+    user = cached_logged_in_user(user_id)
+    stop = perf_counter_ns()
+    print("Time taken to fetch user:", stop - start)
     blog = Blog(title=data.get("title"), description=data.get("description"), creator_user_id=user.id,
                 created_timestamp=datetime.now(timezone('Asia/Kolkata')),
                 last_updated_timestamp=datetime.now(timezone('Asia/Kolkata')))
@@ -401,4 +422,5 @@ def download_file():
 
 if __name__ == "__main__":
     db.create_all()
+    cache = Cache(app)
     app.run(debug=False)
