@@ -2,9 +2,9 @@
 1. Safe html tags
 6. Caching
 7. Update profile pic - WORKING IN MINE
-8. check logged in user - DONE (TO VERIFY )
 4. Monthly reports- DONE (TO VERIFY)
-5. Daily reminder - DONE (TO VERIFY)
+8. check logged in user - DONE
+5. Daily reminder - DONE
 2. Flask security and token based authentication - DONE
 3. Celery Jobs of exporting blogs of only user - DONE
 

@@ -29,7 +29,7 @@ const Profile = Vue.component("profile", {
     {{name}}'s profile        
 </div>
 <div>
-    <img :key="componentKey" :src="getProfilePicUrl()" width="100" height="100">
+    <img :src="getProfilePicUrl()" width="100" height="100">
     <div  v-if="!isDifferentUser" class="mb-2">
                 <label for="formFile" class="form-label my-2">Change Profile Pic</label>
                 <input class="form-control" type="file" id="formFile" ref="formFile" v-on:change="handleProfilePicUpload">
@@ -96,7 +96,8 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
                             return;
                         }
                         console.log("Success:", data);
-                        this.componentKey += 1;
+                        // this.componentKey += 1;
+                        this.$router.push("/profile")
                     })
                     .catch(e => console.log("Error occurred: ", e.message));
             }
