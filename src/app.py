@@ -32,13 +32,15 @@ celery = make_celery(app)
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(hour=19),
-        send_email(),
+        crontab(minute='*', hour='*', day_of_week='*',
+                 day_of_month='*', month_of_year='*'),
+        send_email.delay(),
         name='sends an email every 0th hour of every day'
     )
 
-# @celery.task
+@celery.task
 def send_email():
+    print("send_email called")
     users = User.query.all()
     for user in users:
         if not has_user_posted_today(user.id):
@@ -128,6 +130,7 @@ def login_user():
     auth_token = users[0].encode_auth_token(users[0].id)
     if auth_token:
         session['auth_token'] = auth_token
+    # send_email()
     return jsonify("User logged in successfully")
 
 
