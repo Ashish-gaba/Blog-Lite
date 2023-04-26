@@ -1,15 +1,6 @@
-
-1. Safe html tags
-6. Caching
-7. Update profile pic - WORKING IN MINE
-4. Monthly reports- DONE (TO VERIFY)
-8. check logged in user - DONE
-5. Daily reminder - DONE
-2. Flask security and token based authentication - DONE
-3. Celery Jobs of exporting blogs of only user - DONE
-
 This application is a Flask and VueJS based web application. It is social platform where multiple users can create blog posts and follow other users to see their blogs.
 It provides support for Celery jobs, that can be triggered to be run in the background.
+It also supports caching with the help of redis-server.
 
 ### Requirements
 Install redis and celery.
@@ -17,14 +8,30 @@ Install redis and celery.
 To download the necessary dependencies run the following command on the terminal:
 
 ```
-   pip install -r requirements.txt 
+   pip install -r src/requirements.txt 
 ```
 
 ### Running the app
-To run the app navigate to the src directory and from the terminal run the following command: 
+To run the app navigate to the src directory or directly from the terminal run the following command: 
 
 ```
-   python app.py 
+   python src/app.py 
 ```
-The database will be setup and the server will start running on port 5000. Navigate to http://127.0.0.1:5000 in a browser to start using the app.
 
+Navigate to http://127.0.0.1:5000 in a browser to start using the app.
+
+### Starting the redis server
+To start the redis server run the following command in the linux terminal or wsl:
+
+```
+   redis-server
+```
+
+### Running the celery app
+To use celery jobs run the following command in the linux terminal or wsl:
+
+```
+   celery  -A  app.celery worker --beat -l info
+```
+
+#### Note - Celery and redis will run on linux environment
