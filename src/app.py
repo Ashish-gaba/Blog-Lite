@@ -51,10 +51,9 @@ def check_and_get_authenticated_user():
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(minute='*', hour='*', day_of_week='*',
-                 day_of_month='*', month_of_year='*'),
-        send_email.delay(),
-        name='sends an email every 0th hour of every day'
+        crontab(hour=19),
+        send_email.s(),
+        name='sends an email every 19th hour(at 7:00pm) of every day'
     )
 
 @celery.task
@@ -78,6 +77,7 @@ def send_email():
             s.login(SENDER_ADDRESS, SENDER_PASSWORD)
             s.send_message(msg)
             s.quit()
+    return "Send Email job started.."        
 
 def has_user_posted_today(user_id):
     today = date.today()
