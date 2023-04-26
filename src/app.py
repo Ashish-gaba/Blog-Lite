@@ -28,7 +28,13 @@ SENDER_PASSWORD = ""
 
 app.config.update(
     CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
+    CELERY_RESULT_BACKEND='redis://localhost:6379',
+    REDIS_URL = "redis://localhost:6379",
+    CACHE_TYPE = "RedisCache",
+    CACHE_DEFAULT_TIMEOUT = 15,
+    CACHE_REDIS_HOST = "localhost",
+    CACHE_REDIS_PORT = 6379,
+    CACHE_REDIS_DB = 9
 )
 celery = make_celery(app)
 
@@ -65,8 +71,39 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         crontab(hour=19),
         send_email.s(),
-        name='sends an email every 19th hour(at 7:00pm) of every day'
+        name='sends a reminder email every 19th hour(at 7:00pm) of every day'
     )
+    # sender.add_periodic_task(
+    #     crontab(day_of_month=1),
+    #     send_report.s(),
+    #     name='sends an email report every first day of the  month'
+    # )
+
+# @celery.task
+def send_report():
+    print("send_report called")
+    users = User.query.all()
+    for user in users:
+        blogs = Blog.query.filter_by(creator_user_id=user.id).filter(Blog.created_timestamp>=today).all()
+
+        to_address = f'{user.name}@gmail.com'
+        subject = f"{user.username}, your monthly report on BlogLite!"
+        message = "Post something and let the world know what's on your mind today!"
+
+        msg = MIMEMultipart()
+        msg["From"] = SENDER_ADDRESS
+        msg["To"] = to_address
+        msg["Subject"] = subject
+        msg.attach(MIMEText(message, "HTML"))
+
+        # creating SMTP object with address to whom to send email
+        s = smtplib.SMTP(host=SMTP_SERVER_HOST, port=SMTP_SERVER_PORT)
+        s.login(SENDER_ADDRESS, SENDER_PASSWORD)
+        s.send_message(msg)
+        s.quit()
+
+
+    return "Send Report job started.."
 
 @celery.task
 def send_email():
