@@ -19,7 +19,7 @@ db.init_app(app)
 app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///blogs_database.sqlite3?charset=utf8&check_same_thread=False"
 app.config['SECRET_KEY'] = 'SecretKeyForSession'
-cache = None
+
 
 SMTP_SERVER_HOST = "localhost"
 SMTP_SERVER_PORT = 1025
@@ -38,12 +38,18 @@ app.config.update(
 )
 celery = make_celery(app)
 
+cache = Cache(app)
+
+
 @cache.memoize(10)
 def cached_logged_in_user(user_id):
+    print("Inside get user cache method")
     return User.query.get(user_id)
+
 
 @cache.memoize(10)
 def cached_blog_feed(following_id):
+    print("Inside get blogs cache method")
     return Blog.query.filter_by(creator_user_id=following_id).all()
 
 
