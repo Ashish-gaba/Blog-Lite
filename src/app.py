@@ -15,7 +15,7 @@ from email.mime.multipart import MIMEMultipart
 app = Flask(__name__)
 db.init_app(app)
 app.app_context().push()
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///blogs_database.sqlite3?charset=utf8"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///blogs_database.sqlite3?charset=utf8&check_same_thread=False"
 app.config['SECRET_KEY'] = 'SecretKeyForSession'
 
 SMTP_SERVER_HOST = "localhost"
@@ -28,6 +28,25 @@ app.config.update(
     CELERY_RESULT_BACKEND='redis://localhost:6379'
 )
 celery = make_celery(app)
+
+@app.route("/check_authenticated_user", methods=['GET'])
+def check_authenticated_user():
+    user_id = check_and_get_authenticated_user()
+    if user_id == False:
+        return jsonify({'loggedOutUser': True})
+    return jsonify({'loggedOutUser': False})
+
+def check_and_get_authenticated_user():
+    auth_token = session.get('auth_token')
+    if auth_token:
+        decoded_token = User.decode_auth_token(auth_token=session.get('auth_token'))
+        if decoded_token and not isinstance(decoded_token, str):
+            user_id = decoded_token['sub']
+            expiry_time = decoded_token['exp']
+            current_time = datetime.now().timestamp()
+            if current_time < expiry_time:
+                return user_id
+    return False
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
@@ -134,7 +153,9 @@ def login_user():
 @app.route("/get_feed", methods=["GET"])
 def get_feed():
     feed = []
-    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+    user_id = check_and_get_authenticated_user()
+    if user_id == False:
+        return jsonify({'loggedOutUser': True})
     user = User.query.get(user_id)
     following = Follow.query.filter_by(follower_id=user.id).all()
     followingIds = [el.following_id for el in following]
@@ -164,7 +185,9 @@ def get_feed():
 def create_blog():
     file = request.files.get('file')
     data = json.loads(request.form.get('data'))
-    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+    user_id = check_and_get_authenticated_user()
+    if user_id == False:
+        return jsonify({'loggedOutUser': True})
     user = User.query.get(user_id)
     blog = Blog(title=data.get("title"), description=data.get("description"), creator_user_id=user.id,
                 created_timestamp=datetime.now(timezone('Asia/Kolkata')),
@@ -181,7 +204,9 @@ def create_blog():
 
 @app.route("/search_user/<query>", methods=["GET"])
 def search_user(query):
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     following = Follow.query.filter_by(follower_id=loggedInUserId).all()
     followingIds = [el.following_id for el in following]
     users = User.query.all()
@@ -199,7 +224,9 @@ def search_user(query):
 
 @app.route("/follow/<followingId>", methods=["GET"])
 def follow(followingId):
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     follow = Follow(follower_id=loggedInUserId, following_id=followingId)
     db.session.add(follow)
     db.session.commit()
@@ -208,7 +235,9 @@ def follow(followingId):
 
 @app.route("/user_profile/<id>", methods=["GET"])
 def user_profile(id):
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     if id == 'undefined':
         id = loggedInUserId
     displayUser = User.query.get(id)
@@ -250,7 +279,9 @@ def user_profile(id):
 
 @app.route("/fetch_following", methods=["GET"])
 def fetch_following():
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     following = Follow.query.filter_by(follower_id=loggedInUserId).all()
     followingData = []
     for el in following:
@@ -264,7 +295,9 @@ def fetch_following():
 
 @app.route("/fetch_followers", methods=["GET"])
 def fetch_followers():
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     following = Follow.query.filter_by(follower_id=loggedInUserId).all()
     followingIds = [el.following_id for el in following]
     followers = Follow.query.filter_by(following_id=loggedInUserId).all()
@@ -281,7 +314,9 @@ def fetch_followers():
 
 @app.route("/unfollow_user/<unfollowId>", methods=["GET"])
 def unfollow_user(unfollowId):
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     following = db.session.query(Follow).filter(Follow.follower_id == loggedInUserId).filter(
         Follow.following_id == unfollowId).first()
     if following:
@@ -292,6 +327,9 @@ def unfollow_user(unfollowId):
 
 @app.route("/edit_blog/<id>", methods=['POST'])
 def edit_blog(id):
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     file = request.files.get('file')
     data = json.loads(request.form.get('data'))
     blog = Blog.query.get(id)
@@ -304,10 +342,12 @@ def edit_blog(id):
 
 @app.route("/delete_blog/<id>")
 def delete_blog(id):
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     blog = Blog.query.get(id)
     db.session.delete(blog)
     db.session.commit()
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
     blogs = Blog.query.filter_by(creator_user_id=loggedInUserId).all()
     blogsToSend = []
     for el in blogs:
@@ -321,7 +361,9 @@ def delete_blog(id):
 
 @app.route("/upload_profile_pic", methods=['POST'])
 def upload_profile_pic():
-    loggedInUserId = User.decode_auth_token(auth_token=session.get('auth_token'))
+    loggedInUserId = check_and_get_authenticated_user()
+    if loggedInUserId == False:
+        return jsonify({'loggedOutUser': True})
     file = request.files.get('file')
     currDir = os.path.abspath(os.path.dirname(__file__))
     file.save(currDir + '/static/uploads/profile_pic/' + str(loggedInUserId) + '.png')
@@ -331,7 +373,9 @@ def upload_profile_pic():
 # Celery
 @app.route("/trigger-celery-job")
 def trigger_celery_job():
-    user_id = User.decode_auth_token(auth_token=session.get('auth_token'))
+    user_id = check_and_get_authenticated_user()
+    if user_id == False:
+        return jsonify({'loggedOutUser': True})
     a = generate_csv.delay(user_id)
     return jsonify({
         "Task_ID" : a.id,

@@ -78,6 +78,10 @@ const CreateBlog = Vue.component("create-blog", {
                 })
                     .then((response) => response.json())
                     .then((data) => {
+                        if (data.loggedOutUser) {
+                            this.$router.push("/")
+                            return;
+                        }
                         console.log("Success:", data);
                         this.$router.push("/profile")
                     })
@@ -88,6 +92,13 @@ const CreateBlog = Vue.component("create-blog", {
 
     mounted: function () {
         document.title = "Create blog";
+        fetch('/check_authenticated_user')
+            .then(r => r.json())
+            .then(data => {
+                if (data.loggedOutUser) {
+                    this.$router.push("/")
+                }
+            })
     },
 });
 

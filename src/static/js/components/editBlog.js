@@ -84,6 +84,10 @@ const EditBlog = Vue.component("edit-blog", {
                 })
                     .then((response) => response.json())
                     .then((data) => {
+                        if(data.loggedOutUser) {
+                            this.$router.push("/")
+                            return;
+                        }
                         console.log("Success:", data);
                         this.$router.push("/profile")
                     })

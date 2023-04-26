@@ -91,6 +91,10 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
                 })
                     .then((response) => response.json())
                     .then((data) => {
+                        if(data.loggedOutUser) {
+                            this.$router.push("/")
+                            return;
+                        }
                         console.log("Success:", data);
                         this.componentKey += 1;
                     })
@@ -123,6 +127,10 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
                         return response.json()
                     })
                     .then(data => {
+                        if(data.loggedOutUser) {
+                            this.$router.push("/")
+                            return;
+                        }
                         this.blogs = data
                         this.blogsCount = this.blogsCount - 1;
                     })
@@ -132,6 +140,10 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
         trigger_celery_job : function () {
             fetch("/trigger-celery-job").then(r => r.json()
             ).then(d => {
+                if(d.loggedOutUser) {
+                    this.$router.push("/")
+                    return;
+                }
               console.log("Celery Task Details:", d);
               let interval = setInterval(() => {
                 fetch(`/status/${d.Task_ID}`).then(r => r.json()
@@ -158,6 +170,10 @@ Following count : <button style="color:blue; text-decoration:underline;" @click=
                 return response.json()
             })
             .then(data => {
+                if(data.loggedOutUser) {
+                    this.$router.push("/")
+                    return;
+                }
                 this.blogsCount = data.blogsCount
                 this.followingCount = data.followingCount
                 this.followerCount = data.followerCount

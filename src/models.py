@@ -45,7 +45,7 @@ class User(db.Model):
             if is_expired_token:
                 return 'Token expired. Please log in again.'
             else:
-                return payload['sub']
+                return payload
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:

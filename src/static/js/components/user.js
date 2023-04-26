@@ -66,6 +66,10 @@ Search and follow more people to see what they are posting!
         fetch('/get_feed')
             .then(response => response.json())
             .then(data => {
+                if(data.loggedOutUser) {
+                    this.$router.push("/")
+                    return;
+                }
                 this.name = data.name
                 this.username = data.username
                 this.id = data.id

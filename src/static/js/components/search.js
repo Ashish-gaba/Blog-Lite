@@ -71,6 +71,10 @@ const Search = Vue.component("search", {
             fetch(`/search_user/${this.searchQuery}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (data.loggedOutUser) {
+                        this.$router.push("/")
+                        return;
+                    }
                     this.searchResults = data
                 })
                 .catch(e => console.log("Error occurred: ", e.message));
@@ -79,6 +83,10 @@ const Search = Vue.component("search", {
             fetch(`/follow/${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (data.loggedOutUser) {
+                        this.$router.push("/")
+                        return;
+                    }
                     this.searchResults = []
                     this.$router.push("/profile")
                 })
@@ -88,6 +96,10 @@ const Search = Vue.component("search", {
             fetch(`/unfollow_user/${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (data.loggedOutUser) {
+                        this.$router.push("/")
+                        return;
+                    }
                     this.$router.push("/profile")
                 })
                 .catch(e => console.log("Error occurred: ", e.message));
@@ -95,6 +107,13 @@ const Search = Vue.component("search", {
     },
     mounted: function () {
         document.title = "Search Users"
+        fetch('/check_authenticated_user')
+            .then(r => r.json())
+            .then(data => {
+                if (data.loggedOutUser) {
+                    this.$router.push("/")
+                }
+            })
     }
 });
 

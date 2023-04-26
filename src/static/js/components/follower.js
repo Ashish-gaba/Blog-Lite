@@ -56,6 +56,10 @@ const Follower = Vue.component("follower", {
             fetch(`/follow/${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (data.loggedOutUser) {
+                        this.$router.push("/")
+                        return;
+                    }
                     this.followers = []
                     this.$router.push("/profile")
                 })
@@ -65,6 +69,10 @@ const Follower = Vue.component("follower", {
             fetch(`/unfollow_user/${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (data.loggedOutUser) {
+                        this.$router.push("/")
+                        return;
+                    }
                     this.$router.push("/profile")
                 })
                 .catch(e => console.log("Error occurred: ", e.message));
@@ -75,6 +83,10 @@ const Follower = Vue.component("follower", {
         fetch('/fetch_followers')
             .then(response => response.json())
             .then(data => {
+                if (data.loggedOutUser) {
+                    this.$router.push("/")
+                    return;
+                }
                 this.followers = data
             })
     }

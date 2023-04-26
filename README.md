@@ -1,11 +1,12 @@
 
 1. Safe html tags
-2. Flask security and token based authentication
-3. Celery Jobs of exporting blogs of only user - DONE (TO VERIFY)
-4. Monthly reports
-5. Daily reminder
-6. Caching 
-7. Delete blog page refresh for thumbnail
+6. Caching
+7. Update profile pic - WORKING IN MINE
+8. check logged in user - DONE (TO VERIFY )
+4. Monthly reports- DONE (TO VERIFY)
+5. Daily reminder - DONE (TO VERIFY)
+2. Flask security and token based authentication - DONE
+3. Celery Jobs of exporting blogs of only user - DONE
 
 This application is a Flask and VueJS based web application. It is social platform where multiple users can create blog posts and follow other users to see their blogs.
 It provides support for Celery jobs, that can be triggered to be run in the background.
