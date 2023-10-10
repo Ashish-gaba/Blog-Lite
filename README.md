@@ -1,4 +1,4 @@
-This application is a Flask and VueJS based web application. It is social platform where multiple users can create blog posts and follow other users to see their blogs.
+BlogLite is a web app created with VueJs and python-flask. It is social platform where multiple users can create blog posts and follow other users to see their blogs.
 It provides support for Celery jobs, that can be triggered to be run in the background.
 It also supports caching with the help of redis-server.
 
